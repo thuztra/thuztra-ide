@@ -128,3 +128,4 @@ jobs:
           name: bin-x64
           path: assets/
           retention-days: 7
+# (workflow indexing nudge)
