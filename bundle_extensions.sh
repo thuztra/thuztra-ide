@@ -27,7 +27,7 @@
 
 set -ex
 
-THUZTRA_VSIX="bundled-extensions/thuztra-0.2.0.vsix"
+THUZTRA_VSIX="bundled-extensions/thuztra-0.2.1.vsix"
 
 # target-dir|url|sha256
 PINNED="\
@@ -56,4 +56,4 @@ while IFS='|' read -r dir url sha; do
   rm -f pinned.vsix
 done <<< "${PINNED}"
 
-bundle "${THUZTRA_VSIX}" "thuztra.thuztra-0.2.0"
+bundle "${THUZTRA_VSIX}" "thuztra.thuztra-0.2.1"

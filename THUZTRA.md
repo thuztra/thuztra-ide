@@ -16,13 +16,17 @@ to produce a Thuztra-branded build. The product code lives in
    GUIDs would collide in the registry), plus `licenseUrl` and
    `reportIssueUrl` pointing here. The insider block is untouched (we
    only build stable).
-2. **Icons** — Thuztra mark (orange `#FF4F00` rounded square, white
-   path-drawn "T") replaces the generated artifacts:
-   `src/stable/resources/win32/code.ico`, `win32/code_70x70.png`,
-   `win32/code_150x150.png`, `linux/code.png`, `linux/code.svg`,
-   `server/code-192.png`, `server/code-512.png`, `server/favicon.ico`.
-   NOT yet rebranded: macOS `code.icns`, the Inno installer bitmaps
-   (`win32/inno-*.bmp`), and the per-filetype icons — all still stock.
+2. **Icons** — the Thuztra brand image (the wanderer-on-the-peak at
+   sunrise; source `Thuztra/thuztra-profile.png`, downscaled with
+   `thuztra-ide-artifacts/make_icons.py`) replaces the generated
+   artifacts: `src/stable/resources/win32/code.ico` (16–256 multi-res),
+   `win32/code_70x70.png`, `win32/code_150x150.png`, `linux/code.png`,
+   `linux/code.svg` (the raster embedded as a base64 data URI so the
+   file stays valid SVG), `server/code-192.png`, `server/code-512.png`,
+   `server/favicon.ico`. "For now" placeholder — legible down to ~32px
+   (peak + sun + wanderer still read). NOT yet rebranded: macOS
+   `code.icns`, the Inno installer bitmaps (`win32/inno-*.bmp`), and the
+   per-filetype icons — all still stock.
 3. **`.github/workflows/`** — upstream's workflows are deleted (their
    ci-builds fire on every push across 3 OSes; their publish workflows
    need SignPath/winget secrets we don't have). One replacement:
