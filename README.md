@@ -1,3 +1,18 @@
+# Thuztra IDE
+
+The desktop build of Thuztra's Python strategy environment — a minimal
+fork of the [VSCodium](https://github.com/VSCodium/vscodium) build
+harness, rebranded. **Everything Thuztra-specific in this repo is
+enumerated in [THUZTRA.md](./THUZTRA.md)**; the product itself lives in
+[thuztra-in](https://github.com/thuztra/thuztra-in).
+
+Build: **Actions → "Build - Windows" → Run workflow** (~2 h, unsigned
+installers land in the `bin-x64` artifact).
+
+The original VSCodium README follows.
+
+---
+
 <div id="vscodium-logo" align="center">
     <br />
     <img src="./icons/stable/codium_cnl.svg" alt="VSCodium Logo" width="200"/>

@@ -1,34 +1,22 @@
-name: CI - Build - Windows
+# THUZTRA: trimmed from upstream's ci-build-windows.yml (see THUZTRA.md).
+# Manual-dispatch only, stable quality, x64 only, always produces the
+# installer assets as artifacts. No signing, no release, no winget —
+# those are beta-gated. DISABLE_UPDATE keeps the build from pointing at
+# VSCodium's update server (we have none yet).
+
+name: Build - Windows
 
 on:
   workflow_dispatch:
-    inputs:
-      generate_assets:
-        type: boolean
-        description: Generate assets
-      checkout_pr:
-        type: string
-        description: Checkout PR
-  push:
-    branches:
-      - master
-      - insider
-    paths-ignore:
-      - "**/*.md"
-  pull_request:
-    branches:
-      - "**"
-    paths-ignore:
-      - "**/*.md"
 
 env:
-  APP_NAME: VSCodium
-  BINARY_NAME: ${{ (github.ref == 'refs/heads/insider' || (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'insider')) && 'codium-insiders' || 'codium' }}
+  APP_NAME: Thuztra
+  BINARY_NAME: thuztra
+  DISABLE_UPDATE: yes
   GH_REPO_PATH: ${{ github.repository }}
-  GITHUB_BRANCH: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event.head }}
   ORG_NAME: ${{ github.repository_owner }}
   OS_NAME: windows
-  VSCODE_QUALITY: ${{ (github.ref == 'refs/heads/insider' || (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'insider')) && 'insider' || 'stable' }}
+  VSCODE_QUALITY: stable
 
 permissions: {}
 
@@ -49,13 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ env.GITHUB_BRANCH }}
           persist-credentials: false
-
-      - name: Switch to relevant branch
-        env:
-          PULL_REQUEST_ID: ${{ github.event.inputs.checkout_pr }}
-        run: ./get_pr.sh
 
       - name: Setup Node.js environment
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -95,36 +77,22 @@ jobs:
     needs:
       - compile
     runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        vscode_arch:
-          - x64
-          - arm64
     defaults:
       run:
         shell: bash
     env:
       BUILD_SOURCEVERSION: ${{ needs.compile.outputs.BUILD_SOURCEVERSION }}
-      MS_COMMIT: ${{ needs.check.outputs.MS_COMMIT }}
-      MS_TAG: ${{ needs.check.outputs.MS_TAG }}
-      RELEASE_VERSION: ${{ needs.check.outputs.RELEASE_VERSION }}
+      MS_COMMIT: ${{ needs.compile.outputs.MS_COMMIT }}
+      MS_TAG: ${{ needs.compile.outputs.MS_TAG }}
+      RELEASE_VERSION: ${{ needs.compile.outputs.RELEASE_VERSION }}
       SHOULD_BUILD_REH: no
       SHOULD_BUILD_REH_WEB: no
-      VSCODE_ARCH: ${{ matrix.vscode_arch }}
-    outputs:
-      RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+      VSCODE_ARCH: 'x64'
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ env.GITHUB_BRANCH }}
           persist-credentials: false
-
-      - name: Switch to relevant branch
-        env:
-          PULL_REQUEST_ID: ${{ github.event.inputs.checkout_pr }}
-        run: ./get_pr.sh
 
       - name: Setup Node.js environment
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -143,24 +111,20 @@ jobs:
 
       - name: Build
         env:
-          DISABLE_MSI: ${{ vars[format('DISABLE_{0}_MSI', ((github.ref == 'refs/heads/insider' || (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'insider')) && 'INSIDER' || 'STABLE'))] }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          npm_config_arch: ${{ matrix.vscode_arch }}
-          npm_config_target_arch: ${{ matrix.vscode_arch }}
+          npm_config_arch: 'x64'
+          npm_config_target_arch: 'x64'
         run: ./build/windows/package.sh
 
       - name: Prepare assets
         run: ./prepare_assets.sh
-        if: github.event.inputs.generate_assets == 'true'
 
       - name: Prepare checksums
         run: ./prepare_checksums.sh
-        if: github.event.inputs.generate_assets == 'true'
 
       - name: Upload assets
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: bin-${{ matrix.vscode_arch }}
+          name: bin-x64
           path: assets/
-          retention-days: 3
-        if: github.event.inputs.generate_assets == 'true'
+          retention-days: 7
