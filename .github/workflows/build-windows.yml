@@ -87,6 +87,14 @@ jobs:
       RELEASE_VERSION: ${{ needs.compile.outputs.RELEASE_VERSION }}
       SHOULD_BUILD_REH: no
       SHOULD_BUILD_REH_WEB: no
+      # The MSI's hardcoded build/windows/msi/vscodium.wxs references
+      # VSCODIUM.EXE; our rebrand makes the binary Thuztra.exe, so WiX
+      # can't resolve it (LGHT0094). MSI is enterprise-GPO-only — skip it
+      # pre-beta; the .exe user/system installers + .zip are unconditional
+      # and are the primary deliverables. Revisit (rebrand the .wxs) only
+      # if MSI deployment is ever needed. See THUZTRA.md.
+      SHOULD_BUILD_MSI: no
+      SHOULD_BUILD_MSI_NOUP: no
       VSCODE_ARCH: 'x64'
 
     steps:

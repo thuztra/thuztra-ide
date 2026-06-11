@@ -51,6 +51,15 @@ version (keep OUR GUIDs). If their patches/ fail against a new VS Code,
 that's upstream's problem to fix first — wait for their master to go
 green before rebasing.
 
+## Known limitations
+
+- **MSI installer disabled** (`SHOULD_BUILD_MSI: no` in build-windows.yml).
+  `build/windows/msi/vscodium.wxs` hardcodes `VSCODIUM.EXE`; the rebrand
+  makes the binary `Thuztra.exe`, so WiX fails with LGHT0094. MSI is for
+  enterprise GPO deployment only — the `.exe` user/system installers and
+  the `.zip` are the deliverables. To re-enable later, rebrand the file
+  references in the `.wxs` to the `Thuztra.exe` name and flip the flag.
+
 ## Beta-gated (not yet done)
 
 Code signing (SignPath or cert), auto-update infra (`updateUrl` +
