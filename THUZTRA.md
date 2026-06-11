@@ -30,7 +30,18 @@ to produce a Thuztra-branded build. The product code lives in
    `DISABLE_UPDATE=yes` so the build never points at VSCodium's update
    server).
 4. **`README.md`** — Thuztra header prepended.
-5. This file.
+5. **`bundle_extensions.sh` + `bundled-extensions/`** — injects the
+   Thuztra extension stack (thuztra vsix from this repo; basedpyright,
+   ruff and the ms-python trio — python/debugpy/vscode-python-envs —
+   from Open VSX, version- and sha256-pinned) into
+   `VSCode-win32-x64/resources/app/extensions/` between the package and
+   prepare-assets steps, so every installer/zip ships them as built-in
+   extensions. The ms-python trio is required: ruff hard-depends on
+   ms-python.python and basedpyright needs its API at activation. When
+   the thuztra extension changes in thuztra-in, rebuild the vsix there
+   and copy it into `bundled-extensions/`; when bumping the pinned
+   extensions, update the version + sha256 pins in the script.
+6. This file.
 
 ## Building
 
@@ -45,7 +56,7 @@ git fetch upstream
 git rebase upstream/master
 ```
 
-Conflicts can only occur in the five places listed above. If
+Conflicts can only occur in the six places listed above. If
 `prepare_vscode.sh` conflicts, re-apply the Thuztra block onto their new
 version (keep OUR GUIDs). If their patches/ fail against a new VS Code,
 that's upstream's problem to fix first — wait for their master to go

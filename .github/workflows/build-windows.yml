@@ -124,6 +124,9 @@ jobs:
           npm_config_target_arch: 'x64'
         run: ./build/windows/package.sh
 
+      - name: Bundle Thuztra extensions
+        run: ./bundle_extensions.sh
+
       - name: Prepare assets
         run: ./prepare_assets.sh
 
